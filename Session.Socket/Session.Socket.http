@@ -1,6 +1,0 @@
-@Session.Socket_HostAddress = http://localhost:5145
-
-GET {{Session.Socket_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

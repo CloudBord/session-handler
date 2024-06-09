@@ -1,6 +1,7 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Session.Handler;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
@@ -8,7 +9,13 @@ var host = new HostBuilder()
     {
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
+        services.AddSignalR()
+            .AddAzureSignalR(options =>
+            {
+                options.ConnectionString = Environment.GetEnvironmentVariable("AzureSignalRConnectionString");
+            });
+
     })
     .Build();
 
-host.Run();
+await host.RunAsync();

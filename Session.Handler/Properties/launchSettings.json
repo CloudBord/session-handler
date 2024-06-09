@@ -2,8 +2,14 @@
   "profiles": {
     "Session.Handler": {
       "commandName": "Project",
-      "commandLineArgs": "--port 7222",
-      "launchBrowser": false
+      "commandLineArgs": "--port 7222"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "DockerfileRunArguments": "--init",
+      "httpPort": 30728,
+      "useSSL": false
     }
   }
 }

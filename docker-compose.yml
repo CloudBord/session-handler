@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  session.handler:
+    image: ${DOCKER_REGISTRY-}sessionhandler
+    build:
+      context: .
+      dockerfile: Session.Handler/Dockerfile
