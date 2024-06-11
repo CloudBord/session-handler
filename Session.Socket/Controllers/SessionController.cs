@@ -26,10 +26,8 @@ namespace Session.Socket.Controllers
 
                 if (!_sessions.ContainsKey(room))
                 {
-                    System.Diagnostics.Debug.WriteLine("Created room: " + room);
                     _sessions[room] = [];
                 }
-                System.Diagnostics.Debug.WriteLine("Joined room: " + room);
                 _sessions[room].Add(webSocket);
 
                 await Echo(webSocket, room);
