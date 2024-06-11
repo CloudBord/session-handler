@@ -26,10 +26,6 @@ app.UseCors(builder => builder
 
 app.UseWebSockets();
 
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
