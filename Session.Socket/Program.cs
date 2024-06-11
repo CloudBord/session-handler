@@ -1,23 +1,16 @@
-using System.Net.WebSockets;
+using Session.Socket.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Configure secrets & environment variables
+builder.Configuration.AddUserSecrets<Program>();
+builder.Configuration.AddEnvironmentVariables();
 
+// Add services to the container.
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<ISessionHandler, SessionHandler>();
 
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    builder.Configuration.AddUserSecrets<Program>();
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
 app.UseCors(builder => builder
     .AllowAnyOrigin()

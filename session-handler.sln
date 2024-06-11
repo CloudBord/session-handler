@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Session.DataAccess", "Session.DataAccess\Session.DataAccess.csproj", "{4FB97556-3338-4AFA-8E33-45790C59CB70}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Session.Socket", "Session.Socket\Session.Socket.csproj", "{F43C0417-F694-4974-B7E9-5FF246B06F67}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Session.DataAccess", "Session.DataAccess\Session.DataAccess.csproj", "{8F3AA361-5660-43B3-AA4B-64797A10E2ED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4FB97556-3338-4AFA-8E33-45790C59CB70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4FB97556-3338-4AFA-8E33-45790C59CB70}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4FB97556-3338-4AFA-8E33-45790C59CB70}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4FB97556-3338-4AFA-8E33-45790C59CB70}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F43C0417-F694-4974-B7E9-5FF246B06F67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F43C0417-F694-4974-B7E9-5FF246B06F67}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F43C0417-F694-4974-B7E9-5FF246B06F67}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F43C0417-F694-4974-B7E9-5FF246B06F67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F3AA361-5660-43B3-AA4B-64797A10E2ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F3AA361-5660-43B3-AA4B-64797A10E2ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F3AA361-5660-43B3-AA4B-64797A10E2ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F3AA361-5660-43B3-AA4B-64797A10E2ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
