@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Session.Socket.Services;
+using System.Diagnostics;
 using System.Net.Sockets;
 using System.Net.WebSockets;
 using System.Text;
@@ -9,7 +10,6 @@ using System.Text;
 namespace Session.Socket.Controllers
 {
     [ApiController]
-    [Route("party")]
     public class SessionController(ISessionHandler sessionHandler) : ControllerBase
     {
         private readonly ISessionHandler _sessionHandler = sessionHandler;
@@ -42,12 +42,12 @@ namespace Session.Socket.Controllers
         {
             var buffer = new byte[1024 * 8];
             WebSocketReceiveResult result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-            Console.WriteLine(result);
-
+    
             while (!result.CloseStatus.HasValue)
             {
                 var message = Encoding.UTF8.GetString(buffer, 0, result.Count);
                 var serverMsg = Encoding.UTF8.GetBytes(message);
+                Debug.WriteLine(message);
 
                 var tasks = _sessions[room].Where(ws => ws != webSocket)
                                            .Select(ws => ws.SendAsync(new ArraySegment<byte>(serverMsg, 0, serverMsg.Length), result.MessageType, result.EndOfMessage, CancellationToken.None))
