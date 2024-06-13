@@ -2,13 +2,8 @@
 
 namespace Session.Socket.Services
 {
-    public class SessionHandler : ISessionHandler
+    public class SessionHandler
     {
 
-
-        public async Task HandleWebsSocketConnection(WebSocket socket, string room)
-        {
-
-        }
     }
 }
