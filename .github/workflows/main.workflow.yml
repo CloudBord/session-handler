@@ -25,16 +25,16 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
 
-    - name: Setup testing database
-      run: docker run -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres
+    # - name: Setup testing database
+    #   run: docker run -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres
 
-    - name: Setup Entity Framework tool
-      run: dotnet tool install --global dotnet-ef
+    # - name: Setup Entity Framework tool
+    #   run: dotnet tool install --global dotnet-ef
 
-    - name: Run migrations
-      env:
-        CONNECTIONSTRINGS__NPGSQL: ${{ secrets.CONNECTIONSTRINGS_NPGSQL_TEST }}
-      run: dotnet ef database update --startup-project Whiteboard.Service --project Whiteboard.DataAccess
+    # - name: Run migrations
+    #   env:
+    #     CONNECTIONSTRINGS__NPGSQL: ${{ secrets.CONNECTIONSTRINGS_NPGSQL_TEST }}
+    #   run: dotnet ef database update --startup-project Session.Handler --project Session.DataAccess
 
     - name: Test
       run: dotnet test --no-build --verbosity normal
@@ -81,7 +81,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"CloudBord_whiteboard-service" /o:"cloudbord" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"CloudBord_session-handler" /o:"cloudbord" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
           dotnet build
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
@@ -110,7 +110,7 @@ jobs:
           # This is where you will need to introduce the Snyk API token created with your Snyk account
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: --sarif-file-output=snyk.sarif --file=./whiteboard-service.sln
+          args: --sarif-file-output=snyk.sarif --file=./session-handler.sln
 
         # Push the Snyk Code results into GitHub Code Scanning tab
       - name: Upload result to GitHub Code Scanning
@@ -141,8 +141,8 @@ jobs:
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
       - run: |
-          docker build . -t ${{ secrets.ACR_LOGIN_SERVER }}/${{ secrets.ACR_REPOSITORY }}
-          docker push ${{ secrets.ACR_LOGIN_SERVER }}/${{ secrets.ACR_REPOSITORY }}
+          docker build . -t ${{ secrets.ACR_LOGIN_SERVER }}/session-handler
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/session-handler
 
       - name: build image
         uses: docker/setup-buildx-action@v3
@@ -153,7 +153,7 @@ jobs:
           context: .
           file: ./Whiteboard.Service/Dockerfile
           push: true
-          tags: ${{ secrets.ACR_LOGIN_SERVER }}/${{ secrets.ACR_REPOSITORY }}
+          tags: ${{ secrets.ACR_LOGIN_SERVER }}/session-handler
 
   deploy-image:
     name: Deploy update
@@ -172,5 +172,5 @@ jobs:
         run: az aks get-credentials -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_CLUSTER_NAME }}
 
       - name: Restart deployment
-        run: kubectl rollout restart deployment/whiteboard-service
+        run: kubectl rollout restart deployment/session-handler
         continue-on-error: true # If AKS cluster is not available, pipeline should not fail
