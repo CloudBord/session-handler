@@ -151,7 +151,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./Whiteboard.Service/Dockerfile
+          file: ./Dockerfile
           push: true
           tags: ${{ secrets.ACR_LOGIN_SERVER }}/session-handler
 
