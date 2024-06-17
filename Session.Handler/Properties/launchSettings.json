@@ -1,9 +1,0 @@
-{
-  "profiles": {
-    "Session.Handler": {
-      "commandName": "Project",
-      "commandLineArgs": "--port 7222",
-      "launchBrowser": false
-    }
-  }
-}
