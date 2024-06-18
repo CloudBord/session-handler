@@ -26,6 +26,4 @@ app.UseCors(builder => builder
 
 app.UseWebSockets();
 app.MapControllers();
-
-
 await app.RunAsync();
