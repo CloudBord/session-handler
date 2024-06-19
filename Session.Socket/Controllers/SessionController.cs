@@ -15,7 +15,7 @@ namespace Session.Socket.Controllers
         private static readonly Dictionary<string, List<WebSocket>> _sessions = [];
         private readonly Dictionary<string, string> _state = [];
 
-        [Route("/{room}")]
+        [Route("/party/{room}")]
         public async Task Get([FromRoute] string room)
         {
             if (HttpContext.WebSockets.IsWebSocketRequest)
