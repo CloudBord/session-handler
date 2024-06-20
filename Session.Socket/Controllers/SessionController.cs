@@ -34,7 +34,7 @@ namespace Session.Socket.Controllers
             {
                 HttpContext.Response.StatusCode = 400;
             }
-        }
+        } 
 
         private async Task Echo(WebSocket webSocket, string room)
         {
