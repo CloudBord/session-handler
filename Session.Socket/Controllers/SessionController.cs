@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Session.DataAccess.Repositories;
 using Session.Socket.Services;
 using System.Diagnostics;
 using System.Net.Sockets;
 using System.Net.WebSockets;
 using System.Text;
+using System.Text.Json;
 
 namespace Session.Socket.Controllers
 {
@@ -13,14 +15,26 @@ namespace Session.Socket.Controllers
     public class SessionController : ControllerBase
     {
         private static readonly Dictionary<string, List<WebSocket>> _sessions = [];
-        private readonly Dictionary<string, string> _state = [];
+        private readonly ISnapshotRepository _snapshotRepository;
+
+        public SessionController(ISnapshotRepository snapshotRepository)
+        {
+            _snapshotRepository = snapshotRepository;
+        }
 
         [Route("/{room}")]
-        public async Task Get([FromRoute] string room)
+        public async Task Initialize([FromRoute] string room, [FromQuery] uint boardId)
         {
-            if (HttpContext.WebSockets.IsWebSocketRequest)
+            if (!HttpContext.WebSockets.IsWebSocketRequest)
             {
-                WebSocket webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
+                HttpContext.Response.StatusCode = 400;
+                return;
+            }
+
+            WebSocket? webSocket = null;
+            try
+            {
+                webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
 
                 if (!_sessions.ContainsKey(room))
                 {
@@ -28,15 +42,44 @@ namespace Session.Socket.Controllers
                 }
                 _sessions[room].Add(webSocket);
 
-                await Echo(webSocket, room);
+                await Task.WhenAll(Connect(webSocket, boardId), Send(webSocket, room));
             }
-            else
+            catch (Exception ex)
             {
-                HttpContext.Response.StatusCode = 400;
+                Console.WriteLine(ex.ToString());
             }
-        } 
+            finally
+            {
+                if(webSocket != null)
+                {
+                    // Remove client from room when the connection is closed
+                    if (!string.IsNullOrEmpty(room) && _sessions.ContainsKey(room))
+                    {
+                        _sessions[room].Remove(webSocket);
+                    }
+                    webSocket.Dispose();
+                }
+            }
+        }
 
-        private async Task Echo(WebSocket webSocket, string room)
+        private async Task Connect(WebSocket webSocket, uint boardId)
+        {
+
+            var initMsg = new
+            {
+                type = "init",
+                data = new
+                {
+
+                }
+            };
+            var json = JsonSerializer.Serialize(initMsg);
+            var bytes = Encoding.UTF8.GetBytes(json);
+            await webSocket.SendAsync(new ArraySegment<byte>(bytes, 0, bytes.Length), WebSocketMessageType.Text, true, CancellationToken.None);
+        }
+
+
+        private async Task Send(WebSocket webSocket, string room)
         {
             var buffer = new byte[1024 * 8];
             WebSocketReceiveResult result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
@@ -52,12 +95,6 @@ namespace Session.Socket.Controllers
                 await Task.WhenAll(tasks);
 
                 result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-            }
-
-            // Remove client from room when the connection is closed
-            if (!string.IsNullOrEmpty(room) && _sessions.ContainsKey(room))
-            {
-                _sessions[room].Remove(webSocket);
             }
 
             await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);

@@ -5,16 +5,16 @@ namespace Session.Socket.Services
 {
     public class RedisCacheService : IRedisCacheService
     {
-        private readonly IConnectionMultiplexer _redis;
+        private readonly IConnectionMultiplexer _connectionMultiplexer;
 
-        public RedisCacheService(IConnectionMultiplexer redis)
+        public RedisCacheService(IConnectionMultiplexer connectionMultiplexer)
         {
-            _redis = redis;
+            _connectionMultiplexer = connectionMultiplexer;
         }
 
         public async Task<T> GetCacheValueAsync<T>(string key)
         {
-            var db = _redis.GetDatabase();
+            var db = _connectionMultiplexer.GetDatabase();
             var value = await db.StringGetAsync(key);
             if (value.IsNullOrEmpty)
             {
@@ -26,14 +26,14 @@ namespace Session.Socket.Services
 
         public async Task SetCacheValueAsync<T>(string key, T value, TimeSpan expiration)
         {
-            var db = _redis.GetDatabase();
             var jsonValue = JsonSerializer.Serialize(value);
+            var db = _connectionMultiplexer.GetDatabase();
             await db.StringSetAsync(key, jsonValue, expiration);
         }
 
         public async Task<bool> RemoveCacheValueAsync(string key)
         {
-            var db = _redis.GetDatabase();
+            var db = _connectionMultiplexer.GetDatabase();
             return await db.KeyDeleteAsync(key);
         }
     }

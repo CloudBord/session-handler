@@ -1,3 +1,6 @@
+using Session.DataAccess.Context;
+using Session.DataAccess.Models;
+using Session.DataAccess.Repositories;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +19,13 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
                     throw new MissingFieldException("Redis:ConnectionString missing in appsettings.json!");
     return ConnectionMultiplexer.Connect(redisConfiguration);
 });
+
+builder.Services.Configure<SnapshotsDatabaseSettings>(
+    builder.Configuration.GetSection("MongoDB")
+);
+
+builder.Services.AddSingleton<SnapshotsContext>();
+builder.Services.AddScoped<ISnapshotRepository, SnapshotRepository>();
 
 var app = builder.Build();
 
